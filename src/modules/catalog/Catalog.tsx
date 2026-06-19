@@ -13,7 +13,22 @@ type Vegetables = {
 
 function Catalog() {
 
-  const [vegetables, setVegetables] = useState<Vegetables[]>([]);
+  const skeleton = [];  // заглушка
+  for (let i = 0; i < 8; i++) {
+    skeleton.push(
+      {
+        id: i,
+        name: '',
+        wieght: '',
+        price: 0,
+        image: '',
+      }
+    );
+  }
+
+  const [loading, setLoading] = useState(true);
+
+  const [vegetables, setVegetables] = useState<Vegetables[]>(skeleton);
 
   useEffect(() => {
     async function getData() {
@@ -30,8 +45,9 @@ function Catalog() {
         })
 
         setVegetables(transformData);
+        setLoading(false);
       } catch (error) {
-        console.error(error);
+        console.log(error);
       }
     }
     getData();
@@ -43,7 +59,7 @@ function Catalog() {
         <div className={style.containerCard}>
           {vegetables.map((vegetable: Vegetables) => (
             <div key={vegetable.id}>
-              <CardProduct name={vegetable.name} price={vegetable.price} image={vegetable.image} wieght={vegetable.wieght} count={1} />
+              <CardProduct loading={loading} name={vegetable.name} price={vegetable.price} image={vegetable.image} wieght={vegetable.wieght} count={1} />
             </div>
           ))}
         </div>

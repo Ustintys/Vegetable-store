@@ -4,7 +4,7 @@ import {Button} from "@mantine/core";
 
 function Header() {
   return (
-    <div className={style.container}>
+    <header className={style.container}>
       <div className={style.containerTitle}>
         <h1 className={style.title}>Vegetable</h1>
         <div className={style.titleSHOP}>SHOP</div>
@@ -12,6 +12,6 @@ function Header() {
       <Button classNames={{root: style.ButtonRoot}} rightSection={<Cart />} variant="filled" color="#54b46a">
         Cart
       </Button>
-    </div>
+    </header>
   )}
 export default Header;
