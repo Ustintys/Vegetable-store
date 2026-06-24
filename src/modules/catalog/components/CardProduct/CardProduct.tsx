@@ -16,14 +16,16 @@ type CardProps = {
   id: number;
   name: string;
   price: number;
-  count?: number;
   image: string;
   wieght: string;
   loading: boolean;
   saveDataCard: (id: number) => void;
+  decrease: (id: number) => void;
+  increase: (id: number) => void;
+  quantity: number;
 }
 
-function CardProduct ({ name, price, count, image, wieght, loading, saveDataCard, id }: CardProps) {
+function CardProduct ({ name, price, image, wieght, loading, saveDataCard, id, decrease, quantity, increase }: CardProps) {
   return (
     <>
       {loading ? (
@@ -49,9 +51,9 @@ function CardProduct ({ name, price, count, image, wieght, loading, saveDataCard
               <Text classNames={{root: style.textWeight}}>{wieght}</Text>
             </Group>
             <Group justify="flex-end" gap={10}>
-              <ActionIcon classNames={{root: style.buttonCount}} variant="filled" color="#dee2e6">{<Minus />}</ActionIcon>
-              <Text>{count}</Text>
-              <ActionIcon classNames={{root: style.buttonCount}} variant="filled" color="#dee2e6">{<Plus />}</ActionIcon>
+              <ActionIcon onClick={() => {decrease(id)}} classNames={{root: style.buttonCount}} variant="filled" color="#dee2e6">{<Minus />}</ActionIcon>
+              <Text>{quantity}</Text>
+              <ActionIcon onClick={() => {increase(id)}} classNames={{root: style.buttonCount}} variant="filled" color="#dee2e6">{<Plus />}</ActionIcon>
             </Group>
           </Group>
           <Group classNames={{root: style.groupPrice}} justify="space-between" >

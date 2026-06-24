@@ -1,17 +1,16 @@
 import style from "./catalog.module.scss";
 import CardProduct from "./components/CardProduct/CardProduct.tsx";
-import {useEffect, useState} from "react";
+import {useEffect, useState, useContext} from "react";
 import ky from "ky";
-
-type Vegetables = {
-  id: number;
-  name: string;
-  wieght: string;
-  price: number;
-  image: string;
-};
+import type {Vegetables} from "../../types.tsx";
+import {VegetableContext} from "../../contexts/VegetableContext.tsx";
 
 function Catalog() {
+
+  const context = useContext(VegetableContext);
+  if (!context) return null;
+  const setDataCardCart = context.setDataCardCart;
+  const dataCardCart = context.dataCardCart;
 
   const skeleton = [];  // заглушка
   for (let i = 0; i < 8; i++) {
@@ -22,6 +21,7 @@ function Catalog() {
         wieght: '',
         price: 0,
         image: '',
+        quantity: 0,
       }
     );
   }
@@ -39,8 +39,9 @@ function Catalog() {
 
         const transformData = data.map((product) => {
           const [name, wieght] = product.name.split(' - ');
+          const quantity = 1;
           return(
-            {...product, name, wieght}
+            {...product, name, wieght, quantity}
           )
         })
 
@@ -53,24 +54,50 @@ function Catalog() {
     getData();
   },[]);
 
-  const [dataCardCart, setDataCardCart] = useState<Vegetables[]>([]);
 
   function saveDataCard(id: number) {
 
-    let dataCard: Vegetables;
+    const vegetable = vegetables.find((v) => v.id === id);
 
-    vegetables.map((vegetable) => {
-      if (vegetable.id === id) {
-        dataCard = {
-          id: vegetable.id,
-          name: vegetable.name,
-          wieght: vegetable.wieght,
-          price: vegetable.price,
-          image: vegetable.image,
+    if (!vegetable) return;
+
+    const existingItem = dataCardCart.find((item) => item.id === vegetable.id);
+
+    if (existingItem) {
+      setDataCardCart((prev) =>
+        prev.map((item) => {
+          if (item.id === vegetable.id) {
+            return {...item, quantity: item.quantity + vegetable.quantity };
+          }
+          return item;
+        })
+      );
+    } else {
+      setDataCardCart((prev) => [...prev, {...vegetable, quantity: 1,},]);
+    }
+  }
+
+
+  function decrease(id: number) {
+    setVegetables((prev) => {
+      return prev.map((vegetable) => {
+        if (vegetable.id === id) {
+          return {...vegetable, quantity: Math.max(1,  vegetable.quantity - 1)};
         }
-        setDataCardCart((prev) => [...prev, dataCard]);
-      }
-    })
+        return vegetable;
+      });
+    });
+  }
+
+  function increase(id: number) {
+    setVegetables((prev) => {
+      return prev.map((vegetable) => {
+        if(vegetable.id === id){
+          return {...vegetable, quantity: vegetable.quantity + 1};
+        }
+        return vegetable
+      });
+    });
   }
 
     return (
@@ -79,7 +106,7 @@ function Catalog() {
         <div className={style.containerCard}>
           {vegetables.map((vegetable: Vegetables) => (
             <div key={vegetable.id}>
-              <CardProduct id={vegetable.id} saveDataCard={saveDataCard} loading={loading} name={vegetable.name} price={vegetable.price} image={vegetable.image} wieght={vegetable.wieght} count={1} />
+              <CardProduct increase={increase} quantity={vegetable.quantity} decrease={decrease} id={vegetable.id} saveDataCard={saveDataCard} loading={loading} name={vegetable.name} price={vegetable.price} image={vegetable.image} wieght={vegetable.wieght} />
             </div>
           ))}
         </div>

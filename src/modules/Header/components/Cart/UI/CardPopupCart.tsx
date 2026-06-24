@@ -3,24 +3,21 @@ import {
   ActionIcon,
   Box,
   Card,
-  Divider,
   Group,
   Image,
   Text
 } from "@mantine/core";
 import Minus from "../../../../../assets/icons/Minus.svg?react";
 import Plus from "../../../../../assets/icons/Plus.svg?react";
+import type { Vegetables } from "../../../../../types.tsx";
 
-type Props = {
-  image: string,
-  name: string,
-  wieght: string,
-  price: number,
-  count: number
-}
+type CardPopupCartProps = Vegetables & {
+  decrease: (id: number) => void;
+  increase: (id: number) => void;
+};
 
 
-function CardPopupCart({image, count, wieght, name, price}: Props) {
+function CardPopupCart({image, wieght, name, price, quantity, id, decrease, increase}: CardPopupCartProps) {
   return (
     <Card classNames={{root: style.cardRoot}}>
       <Group justify="space-between" >
@@ -39,12 +36,11 @@ function CardPopupCart({image, count, wieght, name, price}: Props) {
           <Text classNames={{root: style.textPrice}}>$ {price}</Text>
         </Box>
         <Group justify="flex-end" gap={10} classNames={{root: style.groupActionIcon}}>
-          <ActionIcon classNames={{root: style.buttonCount}} variant="filled" color="#dee2e6">{<Minus />}</ActionIcon>
-          <Text>{count}</Text>
-          <ActionIcon classNames={{root: style.buttonCount}} variant="filled" color="#dee2e6">{<Plus />}</ActionIcon>
+          <ActionIcon onClick={() => {decrease(id)}} classNames={{root: style.buttonCount}} variant="filled" color="#dee2e6">{<Minus />}</ActionIcon>
+          <Text>{quantity}</Text>
+          <ActionIcon onClick={() => {increase(id)}} classNames={{root: style.buttonCount}} variant="filled" color="#dee2e6">{<Plus />}</ActionIcon>
         </Group>
       </Group>
-      <Divider classNames={{root: style.divider}} />
     </Card>
   )
 }
